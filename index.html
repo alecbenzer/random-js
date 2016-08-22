@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>Random Password</title>
+  </head>
+  <body>
+    <p id="password"></p>
+    <p><a href="javascript:generate();">Generate another</a></p>
+    <p onclick="generate();">
+      <div><label><input onclick="generate();" type="radio" id="no-symbols" name="symbol">No symbols</label></div>
+      <div><label><input onclick="generate();" type="radio" id="include-symbols" name="symbol">Include symbols</label></div>
+      <div><label><input onclick="generate();" type="radio" id="no-preference" name="symbol" checked="true">No preference</label></div>
+    </p>
+    <script>
+      const symbols = '!@#$%^&*()-_=+[{]}\|;:\'",<.>/?`~';
+      const alphanum = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+      function generate() {
+        let chars = [];
+        if (document.getElementById('no-symbols').checked) {
+          chars = alphanum;
+        } else {
+          chars = alphanum + symbols;
+        }
+        function onePassword() {
+          let x = '';
+          for (let i = 0; i < 16; i++) {
+            const array = new Uint8Array(1);
+            do {
+              window.crypto.getRandomValues(array);
+            } while (array[0] >= chars.length);
+            x += chars[array[0]];
+          }
+          return x;
+        }
+        let password = onePassword();
+        if (document.getElementById('include-symbols').checked) {
+          // while password is strictly alphanumeric
+          while (/^[a-zA-Z0-9]*$/.test(password)) {
+            password = onePassword();
+          } 
+        }
+        document.getElementById('password').textContent = password;
+      }
+      generate();
+    </script>
+  </body>
+</html>
